@@ -276,4 +276,169 @@ document.addEventListener("DOMContentLoaded", function () {
         observer.observe(workSection);
     }
 });
+ // Add animation to service cards on scroll
+    const serviceCards = document.querySelectorAll('.service-card');
+    const pricingCards = document.querySelectorAll('.pricing-card');
+    const additionalPackages = document.querySelectorAll('.additional-package');
+    
+    function animateOnScroll() {
+        serviceCards.forEach(card => {
+            const cardPosition = card.getBoundingClientRect().top;
+            const screenPosition = window.innerHeight / 1.3;
+            
+            if (cardPosition < screenPosition) {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }
+        });
+        
+        pricingCards.forEach(card => {
+            const cardPosition = card.getBoundingClientRect().top;
+            const screenPosition = window.innerHeight / 1.3;
+            
+            if (cardPosition < screenPosition) {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }
+        });
+        
+        additionalPackages.forEach(pkg => {
+            const pkgPosition = pkg.getBoundingClientRect().top;
+            const screenPosition = window.innerHeight / 1.3;
+            
+            if (pkgPosition < screenPosition) {
+                pkg.style.opacity = '1';
+                pkg.style.transform = 'translateY(0)';
+            }
+        });
+    }
+    
+    // Set initial styles for animation
+    serviceCards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    });
+    
+    pricingCards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    });
+    
+    additionalPackages.forEach(pkg => {
+        pkg.style.opacity = '0';
+        pkg.style.transform = 'translateY(30px)';
+        pkg.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    });
+    
+    // Run animation on load and scroll
+    window.addEventListener('load', animateOnScroll);
+    window.addEventListener('scroll', animateOnScroll);
+    
+    // Add price highlighting effect
+    const prices = document.querySelectorAll('.price');
+    prices.forEach(price => {
+        price.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.05)';
+        });
+        
+        price.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+    
+    // Package selection simulation
+    const pricingBtns = document.querySelectorAll('.pricing-btn, .additional-btn');
+    pricingBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            if (this.getAttribute('href') === '#contact') {
+                e.preventDefault();
+                const packageName = this.textContent.trim();
+                
+                // Create a notification
+                const notification = document.createElement('div');
+                notification.className = 'package-notification';
+                notification.innerHTML = `
+                    <div class="notification-content">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Interested in "${packageName}" package? Redirecting to contact form...</span>
+                    </div>
+                `;
+                
+                // Add styles for notification
+                const style = document.createElement('style');
+                style.textContent = `
+                    .package-notification {
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: var(--gradient);
+                        color: white;
+                        padding: 15px 25px;
+                        border-radius: 10px;
+                        box-shadow: var(--shadow-hover);
+                        z-index: 10000;
+                        animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+                        animation-fill-mode: forwards;
+                        max-width: 400px;
+                    }
+                    
+                    .notification-content {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+                    
+                    .notification-content i {
+                        font-size: 1.2rem;
+                    }
+                    
+                    @keyframes slideIn {
+                        from {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+                    
+                    @keyframes fadeOut {
+                        from {
+                            opacity: 1;
+                        }
+                        to {
+                            opacity: 0;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                document.body.appendChild(notification);
+                
+                // Remove notification after 3 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 3000);
+            }
+        });
+    });
+    
+    // Highlight most popular package on hover
+    const featuredCard = document.querySelector('.pricing-card.featured');
+    if (featuredCard) {
+        featuredCard.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.05) translateY(-10px)';
+            this.style.boxShadow = '0 20px 50px rgba(42, 107, 252, 0.3)';
+        });
+        
+        featuredCard.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1.05) translateY(0)';
+            this.style.boxShadow = 'var(--shadow-hover)';
+        });
+    }
 });
