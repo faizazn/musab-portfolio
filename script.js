@@ -141,101 +141,82 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     // Initialize Swiper 3D Coverflow
-function initSwiper() {
-    const swiper = new Swiper('.swiper-container', {
-        effect: 'coverflow',
-        grabCursor: true,
-        centeredSlides: true,
-        slidesPerView: 'auto',
-        coverflowEffect: {
-            rotate: 20,
-            stretch: -30,
-            depth: 200,
-            modifier: 1,
-            slideShadows: true,
-        },
-        navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-        },
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-            dynamicBullets: true,
-        },
-        loop: true,
-        autoplay: {
-            delay: 4000,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-        },
-        speed: 600,
-        spaceBetween: 30,
-        breakpoints: {
-            320: {
-                coverflowEffect: {
-                    rotate: 10,
-                    stretch: -20,
-                    depth: 100,
-                },
-                spaceBetween: 15,
+    function initSwiper() {
+        const swiper = new Swiper('.swiper-container', {
+            effect: 'coverflow',
+            grabCursor: true,
+            centeredSlides: true,
+            slidesPerView: 'auto',
+            coverflowEffect: {
+                rotate: 20,
+                stretch: -30,
+                depth: 200,
+                modifier: 1,
+                slideShadows: true,
             },
-            768: {
-                coverflowEffect: {
-                    rotate: 15,
-                    stretch: -25,
-                    depth: 150,
-                },
-                spaceBetween: 20,
+            // Start with the second slide (index 1)
+        initialSlide: 1,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
             },
-            992: {
-                coverflowEffect: {
-                    rotate: 20,
-                    stretch: -30,
-                    depth: 200,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+                dynamicBullets: false,
+                renderBullet: function (index, className) {
+                    return '<span class="' + className + '"></span>';
+                }
+            },
+            loop: false,
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+            },
+            speed: 600,
+            spaceBetween: 30,
+            breakpoints: {
+                320: {
+                    coverflowEffect: {
+                        rotate: 10,
+                        stretch: -20,
+                        depth: 100,
+                    },
+                    spaceBetween: 15,
                 },
-                spaceBetween: 30,
-            }
-        }
-    });
-    
-    // Add hover effect to slides
-    const slides = document.querySelectorAll('.swiper-slide');
-    slides.forEach(slide => {
-        slide.addEventListener('mouseenter', function() {
-            if (!this.classList.contains('swiper-slide-active')) {
-                this.style.transform = 'scale(1.05)';
-                this.style.boxShadow = '0 20px 40px rgba(42, 107, 252, 0.2)';
-                this.style.zIndex = '5';
+                768: {
+                    coverflowEffect: {
+                        rotate: 15,
+                        stretch: -25,
+                        depth: 150,
+                    },
+                    spaceBetween: 20,
+                },
+                992: {
+                    coverflowEffect: {
+                        rotate: 20,
+                        stretch: -30,
+                        depth: 200,
+                    },
+                    spaceBetween: 30,
+                }
             }
         });
         
-        slide.addEventListener('mouseleave', function() {
-            if (!this.classList.contains('swiper-slide-active')) {
-                this.style.transform = '';
-                this.style.boxShadow = '';
-                this.style.zIndex = '';
-            }
-        });
-    });
+        // Force update pagination after initialization
+        setTimeout(() => {
+            swiper.pagination.render();
+            swiper.pagination.update();
+        }, 100);
+        
+        return swiper;
+    }
     
-    // Pause autoplay on hover
-    const swiperContainer = document.querySelector('.swiper-container');
-    swiperContainer.addEventListener('mouseenter', function() {
-        swiper.autoplay.stop();
-    });
-    
-    swiperContainer.addEventListener('mouseleave', function() {
-        swiper.autoplay.start();
-    });
-    
-    return swiper;
-}
-
-// Initialize Swiper when the page loads
-if (typeof Swiper !== 'undefined') {
-    setTimeout(initSwiper, 100);
-}
+    // Initialize Swiper when the page loads
+    if (typeof Swiper !== 'undefined') {
+        setTimeout(initSwiper, 100);
+    }
     
     // Add animation to feature cards on scroll
     const featureCards = document.querySelectorAll('.feature-card');
@@ -283,6 +264,17 @@ if (typeof Swiper !== 'undefined') {
             if (cardPosition < screenPosition) {
                 card.style.opacity = '1';
                 card.style.transform = 'translateY(0)';
+            }
+        });
+        
+        // Animate experience slides
+        const experienceSlides = document.querySelectorAll('.swiper-slide');
+        experienceSlides.forEach(slide => {
+            const slidePosition = slide.getBoundingClientRect().top;
+            const screenPosition = window.innerHeight / 1.3;
+            
+            if (slidePosition < screenPosition) {
+                slide.style.opacity = '0.6';
             }
         });
     }
@@ -474,21 +466,3 @@ if (typeof Swiper !== 'undefined') {
         });
     }
 });
-
-// Add styles for Swiper if not already loaded
-if (!document.querySelector('#swiper-styles')) {
-    const swiperStyle = document.createElement('style');
-    swiperStyle.id = 'swiper-styles';
-    swiperStyle.textContent = `
-        .swiper-container {
-            width: 100%;
-            height: 100%;
-        }
-        .swiper-slide {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-    `;
-    document.head.appendChild(swiperStyle);
-}
